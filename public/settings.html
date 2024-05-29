@@ -1,0 +1,210 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <title>Settings</title>
+</head>
+<body>
+<div class="sidebar">
+    <h1 class="logo">ChefGPT</h1>
+    <div class="menus">
+        <a href='/home.html'><ion-icon name="home-outline"></ion-icon>Home</a>
+        <a href='bookmark.html' id="bookmark-link"><ion-icon name="bookmarks-outline"></ion-icon>Bookmarks</a>
+        <a href='/test.html'><ion-icon name="chatbubble-outline"></ion-icon>Chat</a>
+        <a href="/community.html" id="community-link"><ion-icon name="aperture-outline"></ion-icon>Community</a>
+        <a href="/setting.html"><ion-icon name="settings-outline"></ion-icon>Settings</a>
+    </div>
+    <div class="profile">
+        <img class="profile-img" src="my.jpg">
+        <div class="profile-name">
+            <a href="/user.html">Albert Einstein</a>
+        </div>
+    </div>
+</div>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <title>Settings</title>
+    <style>
+        /* Additional CSS for contrast slider */
+        .contrast-slider-container {
+            position: fixed;
+            top: 50%;
+            left: 60%;
+            transform: translate(-50%, -50%);
+            z-index: 999; /* Ensures the slider is on top */
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .contrast-slider-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .contrast-slider-container input[type="range"] {
+            width: 100%;
+        }
+
+    .form-container {
+        display:flex;
+    flex-direction: row;
+    align-items: center;
+    gap:0.5rem;
+    padding:1rem;
+    /* background-color: #fff; */
+    color: #1e1e1e;
+    border: none; 
+    /* border-radius: 10px; */
+    box-shadow: rgba(99,99,99,0.2) 0px 2px 8px 0px;
+    cursor: pointer;
+    width: 100px;
+    height: 50px;
+
+}
+
+
+  form {
+            width: 300px; /* Adjust the width as needed */
+            padding: 20px;
+            /* border: 1px solid #ccc; */
+            border-radius: 10px; 
+            /* background-color: lavender; */
+        }
+
+        /* Style for the button */
+        .submit-btn {
+            display: block;
+            width: 100px;
+            /* padding: 10px; */
+            /* margin-top: 20px; */
+            /* border: none; */
+            /* border-radius: 5px;  */
+            /* background-color: #472dbb; */
+            /* color: #fff; */
+            font-size: 16px;
+            cursor: pointer;
+            height: 50px;
+        }
+        .submit-btn:hover{
+        background-color: #4565a0;
+}
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <h1 class="logo">ChefGPT</h1>
+    <div class="menus">
+        <a href='/home.html'><ion-icon name="home-outline"></ion-icon>Home</a>
+        <a href='bookmark.html' id="bookmark-link"><ion-icon name="bookmarks-outline"></ion-icon>Bookmarks</a>
+        <a href='/test.html'><ion-icon name="chatbubble-outline"></ion-icon>Chat</a>
+        <a href="/community.html" id="community-link"><ion-icon name="aperture-outline"></ion-icon>Community</a>
+        <a href="/setting.html"><ion-icon name="settings-outline"></ion-icon>Settings</a>
+    </div>
+    <div class="form-container">
+        <form>
+            <button type="button" id="signoutbutton" class="submit-btn">Sign Out</button>
+        </form>
+    </div>
+    <div class="profile">
+        <img class="profile-img" src="my.jpg">
+        <div class="profile-name">
+            <a href="/user.html">Albert Einstein</a>
+        </div>
+    </div>
+</div>
+<div class="contrast-slider-container">
+    <label for="contrast-slider">Contrast:</label>
+    <input type="range" id="contrast-slider" min="0" max="200" value="100">
+</div>
+
+
+
+<h2 id="msg"></h2>
+<h2 id="greet"></h2>
+<script>
+    const contrastSlider = document.getElementById('contrast-slider');
+
+    // Function to apply contrast to main content area of the current page
+    function applyContrastToCurrentPage(contrastValue) {
+        const currentPageContent = document.querySelector('.main-content');
+        if (currentPageContent) {
+            currentPageContent.style.filter = `contrast(${contrastValue}%)`;
+        }
+    }
+
+    contrastSlider.addEventListener('input', function() {
+        const contrastValue = parseInt(this.value);
+        document.body.style.filter = `contrast(${contrastValue}%)`;
+
+        // Store the contrast value in local storage to maintain it across pages
+        localStorage.setItem('contrastValue', contrastValue);
+
+        // Apply contrast to the main content area of the current page
+        applyContrastToCurrentPage(contrastValue);
+    });
+
+    // Apply contrast value from local storage on page load
+    window.addEventListener('load', function() {
+        const storedContrastValue = localStorage.getItem('contrastValue');
+        if (storedContrastValue) {
+            contrastSlider.value = storedContrastValue;
+            document.body.style.filter = `contrast(${storedContrastValue}%)`;
+            // Apply contrast to the main content area of the current page
+            applyContrastToCurrentPage(storedContrastValue);
+        }
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+    <script>
+        let UserCreds = JSON.parse(sessionStorage.getItem("user-creds"));
+        let UserInfo = JSON.parse(sessionStorage.getItem("user-info"));
+
+        let MsgHead = document.getElementById('msg');
+        let GreetHead = document.getElementById('greet');
+        let SignoutBtn = document.getElementById('signoutbutton');
+
+        
+        let Signout = ()=> {
+            sessionStorage.removeItem("user-creds");
+            sessionStorage.removeItem("user-info");
+            window.location.href = 'login.html'
+        }
+
+        let Checkcred = () => {
+            if(sessionStorage.getItem("user-creds"))
+            window.location.href = 'login.html'
+
+            else{
+                MsgHead.innerText = `User with email "${UserCreds.email}" logged in`;
+                GreetHead.innerText = `Welcome ${UserInfo.firstname + " " +UserInfo.lastname}!`;
+
+            }
+        }
+
+        window.addEventListener('load', Checkcred);
+        SignoutBtn.addEventListener('click', Signout)
+    </script>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+</body>
+</html>

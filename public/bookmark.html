@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <title>Bookmarks</title>
+</head>
+<body>
+<div class="sidebar">
+    <h1 class="logo">ChefGPT</h1>
+    <div class="menus">
+        <a href='/home.html'><ion-icon name="home-outline"></ion-icon>Home</a>
+        <a href='bookmark.html' id="bookmark-link"><ion-icon name="bookmarks-outline"></ion-icon>Bookmarks</a>
+        <a href='/test.html'><ion-icon name="chatbubble-outline"></ion-icon>Chat</a>
+        <a href="/community.html" id="community-link"><ion-icon name="aperture-outline"></ion-icon>Community</a>
+        <a href="/settings.html"><ion-icon name="settings-outline"></ion-icon>Settings</a>
+    </div>
+    <div class="font-buttons">
+        Font</br></br>
+        <button id="decreaseFontButton" class="font-adjust-button">-</button>
+        <button id="increaseFontButton" class="font-adjust-button">+</button>
+    </div>
+    <button id="voiceButton" class="voice-button" onclick = "startRecognition()"> 
+        <img src = "microphone.png" width = "20px" height = "20px">
+      </button>
+    <div class="profile">
+        <img class="profile-img" src="my.jpg">
+        <div class="profile-name">
+            <a href="/user.html">Heera Ethirajan</a>
+        </div>
+    </div>
+</div>
+</div>
+
+  
+
+  <!-- <button id="readButton" class="voice-button" onclick = "startReading()"> 
+    <img src = "text-to-speech.png" width = "20px" height = "20px">
+  </button> -->
+</div>
+
+<div class="bookmarks-main">
+    
+  
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+    import { getDatabase, push, ref as dbRef, get, update} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+    import { getStorage, getDownloadURL, uploadBytes, ref} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
+
+
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCVF546dx15y3nE2Zdgsb9aJ8LQOv-llVA",
+        authDomain: "chefgpt-833d4.firebaseapp.com",
+        projectId: "chefgpt-833d4",
+        storageBucket: "chefgpt-833d4.appspot.com",
+        messagingSenderId: "494711475094",
+        appId: "1:494711475094:web:06a949f10ebe29f0d96bb7"
+    };
+
+    const firebase = initializeApp(firebaseConfig);
+    const database = getDatabase();
+    const storage = getStorage();
+    const auth = getAuth(firebase);
+
+    // Function to fetch bookmarks and populate UI
+    function fetchBookmarksAndPopulateUI() {
+        // Get the current user's ID
+        let userId;
+        onAuthStateChanged(auth, (user) => {
+        if (user) {
+            userId = user.uid;
+            console.log("Userid:", userId);
+
+        // Reference to the user's bookmarks in the database
+        const userBookmarksRef = dbRef(database, `users/${userId}/bookmarks`);
+
+        // Fetch user's bookmarks
+        get(userBookmarksRef)
+            .then((snapshot) => {
+                const bookmarks = snapshot.val();
+                if (bookmarks) {
+                    // Iterate through each bookmark
+                    Object.values(bookmarks).forEach((postId) => {
+                        // Fetch the post details for the current bookmark
+                        const postRef = dbRef(database, `posts/${postId}`);
+                        get(postRef)
+                            .then((postSnapshot) => {
+                                const post = postSnapshot.val();
+                                if (post) {
+                                    // Populate the UI with post details
+                                    populateUIWithPostDetails(post);
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Error fetching post details:", error);
+                            });
+                    });
+                }
+            })
+        
+            .catch((error) => {
+                console.error("Error fetching bookmarks:", error);
+            });
+        
+    }
+    
+        })
+    }
+
+    // Function to populate UI with post details
+    function populateUIWithPostDetails(post) {
+        // Example: Populate the title and description of the post
+        const bookmarksMain = document.querySelector(".bookmarks-main");
+        const feedCard = document.createElement("div");
+        feedCard.classList.add("feed-card");
+        feedCard.innerHTML = `
+            <div class="img-card">
+                <img src="${post.image_url}">
+            </div>
+            <div class="title-card">
+                <h3>${post.food_name}</h3>
+            </div>
+            <div class="desc-card">
+                <p>Cuisine: ${post.cuisine}</p>
+            </div>
+            <div class="desc-card">
+                <p>Course: ${post.course}</p>
+            </div>
+            <div class="desc-card">
+                <p>Prep time: ${post.prep_time}</p>
+            </div>
+        `;
+        bookmarksMain.appendChild(feedCard);
+    }
+
+    // Call the function to fetch bookmarks and populate UI
+    fetchBookmarksAndPopulateUI();
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+console.log("1234");
+// Function to fetch post details and populate bookmark detail block
+function fetchPostDetailsAndPopulateBookmarkDetail(postId) {
+    // Reference to the post in the database
+    const postRef = dbRef(database, `posts/${postId}`);
+
+    // Fetch post details
+    get(postRef)
+        .then((postSnapshot) => {
+            const post = postSnapshot.val();
+            if (post) {
+                // Populate the bookmark detail block with post details
+                populateBookmarkDetail(post);
+            }
+        })
+        .catch((error) => {
+            console.error('Error fetching post details:', error);
+        });
+}
+
+// Function to populate bookmark detail block with post details
+function populateBookmarkDetail(post) {
+    // Populate HTML elements with post details
+    const detailHeader = document.querySelector('.bookmark-detail .detail-header');
+    const detailImage = detailHeader.querySelector('#detail-image');
+    const detailTitle = detailHeader.querySelector('h2');
+    const detailParagraphs = detailHeader.querySelectorAll('p');
+
+    console.log(detailParagraphs);
+
+    // Example: Populate detail image, title, and paragraphs
+    detailImage.src = post.image_url;
+    detailTitle.textContent = post.food_name;
+    detailParagraphs[0].textContent = `Cuisine: ${post.cuisine}`;
+    detailParagraphs[1].textContent = `Time: ${post.prep_time}`;
+    
+    
+    console.log("text",detailParagraphs[1].textContent);
+    // Populate Ingredients and Instructions
+    // const IngredientsList = detailHeader.querySelector('#ingredients');
+    // const InstructionsList = de.querySelector('#instructions');
+
+    const inter = document.querySelector('.bookmark-detail .detail-desc');
+    const ingredient = inter.querySelector('#IngredientsList');
+    const detailp1 = ingredient.querySelectorAll('p');
+
+    detailp1[0].textContent = `${post.ingredients}`;
+
+   
+    const instruct = inter.querySelector('#InstructionsList');
+    const detailp2 = instruct.querySelectorAll('p');
+
+    detailp2[0].textContent = `${post.instructions}`;
+
+    // // Clear previous contents
+    // IngredientsList.innerHTML = '';
+    // InstructionsList.innerHTML = '';
+
+    // // Populate Ingredients
+    // post.ingredients.forEach((ingredient) => {
+    //     const li = document.createElement('li');
+    //     li.textContent = ingredient;
+    //     IngredientsList.appendChild(li);
+    // });
+
+    // // Populate Instructions
+    // post.instructions.forEach((instruction) => {
+    //     const li = document.createElement('li');
+    //     li.textContent = instruction;
+    //     InstructionsList.appendChild(li);
+    // });
+}
+
+function getPostid(imageUrl) {
+    get(dbRef(database, 'posts'))
+        .then((snapshot) => {
+            console.log('Fetched post details.');
+            const posts = snapshot.val();
+            console.log('Posts:', posts);
+            if (posts) {
+                for (const postId in posts) {
+                    const post = posts[postId];
+                    if (imageUrl === post.image_url) {
+                        fetchPostDetailsAndPopulateBookmarkDetail(postId);
+                        break;
+                    }
+                }
+            }
+        })
+        .catch((error) => {
+            console.error('Error fetching posts:', error);
+        });
+}
+
+// Function to handle clicks on feed cards
+function handleFeedCardClick(event) {
+    // Check if the clicked element or its parent has the class 'feed-card'
+    if (event.target.classList.contains('feed-card') || event.target.closest('.feed-card')) {
+        // Get the image URL from the clicked feed card
+        const dis = document.querySelector('.bookmark-detail');
+        dis.style.display = 'block';
+        
+        const imageUrl = event.target.closest('.feed-card').querySelector('img').src;
+        console.log('Clicked image URL:', imageUrl);
+        // Call getPostid with the image URL
+        getPostid(imageUrl);
+    }
+}
+
+// Attach event listener to the document
+document.addEventListener('click', handleFeedCardClick);
+
+
+// Wait for DOM content to be loaded before registering event listeners
+
+});
+
+let recognition;
+
+// Add event listener to the button to start recognition when clicked
+document.getElementById('voiceButton').addEventListener('click', startRecognition);
+
+function startRecognition() {
+  // Initialize recognition if it's not already initialized
+  console.log("startRecognition() function is executed");
+  if (!recognition) {
+    recognition = new webkitSpeechRecognition();
+    recognition.lang = 'en-US';
+
+    // Set recognition options
+    recognition.continuous = false; // Stop listening after one phrase is spoken
+
+    // Event handler for recognition result
+    recognition.onresult = function(event) {
+      const voiceCommand = event.results[0][0].transcript.toLowerCase(); // Convert the voice command to lowercase for easier comparison
+      if (voiceCommand.includes('scroll up')) {
+        scrollToTop(); // Scroll to the top of the page
+      } else if (voiceCommand.includes('go up')) {
+        scrollToTop(); // Navigate to the community page
+      } else if (voiceCommand.includes('scroll to the top')) {
+        scrollToTop(); // Navigate to the community page
+      } else if (voiceCommand.includes('go to top')) {
+        scrollToTop(); // Navigate to the community page
+      } else if (voiceCommand.includes('go to community')) {
+        window.location.href = '/community.html'; // Navigate to the community page
+      } else if (voiceCommand.includes('go to settings')) {
+        window.location.href = '/settings.html'; // Navigate to the settings page
+      } else if (voiceCommand.includes('go to home')) {
+        window.location.href = '/home.html'; // Navigate to the settings page
+      } else if (voiceCommand.includes('user profile')) {
+        window.location.href = '/user.html'; // Navigate to the settings page
+      } else if (voiceCommand.includes('go to chat')) {
+        window.location.href = '/test.html'; // Navigate to the community page
+      } else if (voiceCommand.includes('go to bookmarks')) {
+        window.location.href = '/bookmark.html'; // Navigate to the settings page
+      }else {
+        document.getElementById('voiceInputResult').textContent = voiceCommand; // Display the voice command for debugging
+      }
+
+      // Re-enable the button after recognition stops
+      document.getElementById('voiceButton').disabled = false;
+    };
+
+    // Event handler for recognition error
+    recognition.onerror = function(event) {
+      console.error('Speech recognition error', event.error);
+
+      // Re-enable the button if there's an error
+      document.getElementById('voiceButton').disabled = false;
+    };
+  }
+
+  // Start recognition
+  recognition.start();
+
+  // Disable the button during recognition
+  document.getElementById('voiceButton').disabled = true;
+}
+
+
+function decreaseFontSize() {
+        // Get the current font size of the body element
+        var currentFontSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+        // Decrease the font size by 1 pixel
+        var newFontSize = currentFontSize - 1;
+        // Set the new font size to the body element
+        document.body.style.fontSize = newFontSize + "px";
+    }
+
+    // Function to increase font size
+    function increaseFontSize() {
+        // Get the current font size of the body element
+        var currentFontSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+        // Increase the font size by 1 pixel
+        var newFontSize = currentFontSize + 1;
+        // Set the new font size to the body element
+        document.body.style.fontSize = newFontSize + "px";
+    }
+
+    // Add event listeners to the font size adjustment buttons
+    document.getElementById("decreaseFontButton").addEventListener("click", decreaseFontSize);
+    document.getElementById("increaseFontButton").addEventListener("click", increaseFontSize);
+
+
+
+
+
+
+</script>
+
+
+
+<div class="bookmark-detail">
+    <h2><ion-icon name="aperture-outline"></ion-icon>&nbsp;ChefGPT Community</h2>
+    <br>
+    <br>
+    <div class="detail-header">
+        <img id="detail-image" src=""> 
+        <br>
+        <h2></h2>
+        <br>
+        <p></p>
+        <p></p>
+        <br>
+        <button class="btn-like"><ion-icon name="thumbs-up-outline"></ion-icon></button>
+    </div>
+    <hr class="divider">
+    <div class="detail-desc">
+        <div class="Ingredients" id = "IngredientsList">
+            <h4>Ingredients</h4>
+            <br>
+            <p ></p>
+        </div>
+        <hr class="divider">
+        <div class="Instructions" id="InstructionsList">
+           
+    <h4>Instructions</h4>
+    <br>
+        <p></p>
+
+        </div>
+        <div class="detail-btn">
+            <button class="btn-like"><ion-icon name="thumbs-up-outline"></ion-icon></button>
+            <button class="btn-save">Remove Bookmark</button>
+
+        </div>
+    </div>
+    
+    <br>
+    
+    <br>
+    
+
+</div>
+
+<!-- <script>
+    const bookmarkDetailImage = document.querySelector('.bookmark-detail #detail-image');
+
+    const bookmarkBlock = document.querySelector('.bookmarks-main');
+    const bookmarkCards = document.querySelectorAll('.bookmarks-main .feed-card');
+    const bookmarkDetail = document.querySelector('.bookmark-detail');
+    bookmarkCards.forEach(function(card) {
+    feedCard.addEventListener('click', function() {
+        // Display bookmark detail when a card is clicked
+        const bookmarkDetail = document.querySelector('.bookmark-detail');
+        bookmarkDetail.style.display = 'block';
+        
+        // Get the clicked image source
+        const clickedImageSrc = card.querySelector('.img-card img').src;
+
+        // Update the image source in the bookmark detail
+        bookmarkDetailImage.src = clickedImageSrc;
+    });
+});
+</script> -->
+
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>   
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Community</title>
+</head>
+<body>
+<div class="sidebar">
+    <h1 class="logo">ChefGPT</h1>
+    <div class="menus">
+        <a href='/home.html'><ion-icon name="home-outline"></ion-icon>Home</a>
+        <a href='/bookmark.html' id="bookmark-link"><ion-icon name="bookmarks-outline"></ion-icon>Bookmarks</a>
+        <a href='/test.html'><ion-icon name="chatbubble-outline"></ion-icon>Chat</a>
+        <a href="/community.html" id="community-link"><ion-icon name="aperture-outline"></ion-icon>Community</a>
+        <a href="/settings.html"><ion-icon name="settings-outline"></ion-icon>Settings</a>
+    </div>
+    <div class="profile">
+        <img class="profile-img" src="my.jpg">
+        <div class="profile-name">
+            <a href="/user.html">Albert Einstein</a>
+        </div>
+    </div>
+</div>
+<div class="main">
+    <div class="main-header">
+        <ion-icon class="menu-bar" name="menu-outline"></ion-icon>
+        <div class="search">
+            <input type="text" placeholder="Food in mind? Type it down ....">
+            <button class="btn-search"><ion-icon name="search-outline"></ion-icon></button>
+        </div>
+    </div>
+    <ion-icon id='dislike' name="heart-dislike-circle-outline"></ion-icon>
+    <div class="swipper"></div>
+    <ion-icon id='like' name="heart-circle-outline"></ion-icon>
+    <button class="new-post-button"><ion-icon name="add-circle-outline"></ion-icon></button> 
+</div>
+<div class="detail">
+    <h2><ion-icon name="aperture-outline"></ion-icon>&nbsp;ChefGPT Community</h2>
+    <br>
+    <br>
+    <div class="detail-header">
+        <img id="detail-image" src=""> 
+        <br>
+        <h2 id="dishName"></h2>
+        <br>
+        <p id = "cuisine"></p>
+        <p id="time"></p>
+        <br>
+        <button class="btn-like"><ion-icon name="thumbs-up-outline"></ion-icon></button>
+    </div>
+    <hr class="divider">
+    <div class="detail-desc">
+        <div class="Ingredients" id="ingredients">
+            <h4>Ingredients:</h4>
+            <br>
+        </div>
+        <hr class="divider">
+        <div class="Instructions" id="instructions">
+           
+    <h4>Instructions:</h4>
+    <br>
+    
+
+
+        </div>
+        <div class="detail-btn">
+            <button class="btn-like"><ion-icon name="thumbs-up-outline"></ion-icon></button>
+            <button class="btn-save">Add to Bookmarks</button>
+
+        </div>
+    </div>
+    
+    <br>
+    
+    <br>
+    
+
+</div>
+
+
+
+
+
+<div class="post-container">
+    <h2><ion-icon name="aperture-outline"></ion-icon>&nbsp;ChefGPT Community</h2>
+    <br>
+    <br>
+    <div class="post-header">
+        <h3>&nbsp;What did you cook Today?</h3>
+        <form id="post-form" class="post-form">
+            <input type="file" name="post-image" class="post-inputs" id="postImage" required>
+            <input type="text" name="post-dish-name" placeholder="Dish Name" class="post-inputs" id="dishName" required>
+            <input type="text" name="post-cuisine" placeholder="Cuisine" class="post-inputs" id="Cuisine" required>
+            <input type="text" name="post-time" placeholder="Time taken" class="post-inputs" id="time" required>
+            <textarea name="post-ingredients" placeholder="What are the Ingredients?" class="post-inputs text-area" id="ingredients" required></textarea>
+            <textarea name="post-instructions" placeholder="How did you make the dish?" class="post-inputs text-area" id="desc" required></textarea>
+            <button type="button" class="btn-post" id="btn"><ion-icon name="megaphone-outline"></ion-icon>&nbsp;Post</button>
+        </form>
+    </div>
+</div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+    import { getStorage, getDownloadURL, uploadBytes, ref} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
+    import { getDatabase, push, ref as dbRef, get, update} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+
+    const firebaseConfig = {
+              apiKey: "AIzaSyCVF546dx15y3nE2Zdgsb9aJ8LQOv-llVA",
+              authDomain: "chefgpt-833d4.firebaseapp.com",
+              projectId: "chefgpt-833d4",
+              storageBucket: "chefgpt-833d4.appspot.com",
+              messagingSenderId: "494711475094",
+              appId: "1:494711475094:web:06a949f10ebe29f0d96bb7"
+            };
+
+    const firebase = initializeApp(firebaseConfig);
+    const database = getDatabase();
+    const storage = getStorage();
+    const auth = getAuth(firebase);
+
+    document.getElementById('btn').addEventListener('click', uploadData);
+
+    function uploadData() {
+        const file = document.getElementById('postImage').files[0];
+        const dishName = document.getElementsByName('post-dish-name')[0].value;
+        const cuisine = document.getElementById('Cuisine').value;
+        const timeTaken = document.getElementsByName('post-time')[0].value;
+        const ingredients = document.getElementsByName('post-ingredients')[0].value;
+        const instructions = document.getElementById('desc').value;
+
+        let userId;
+
+        onAuthStateChanged(auth, (user) => {
+            if(user){
+                userId = user.uid;
+            }
+            else{
+                console.log("User not available");
+            }
+        })
+
+        console.log('File:', file);
+        console.log('Dish Name:', dishName);
+        console.log('Cuisine:', cuisine);
+        console.log('Time Taken:', timeTaken);
+        console.log('Ingredients:', ingredients);
+        console.log('Instructions:', instructions);
+
+        if (!dishName || !cuisine || !timeTaken || !ingredients || !instructions) {
+        console.log("All fields are required");
+        return; // Exit function if any required field is empty
+    }
+        
+
+        const storageRef = ref(storage,'images/' + file.name);
+
+        uploadBytes(storageRef, file).then((snapshot) => {
+            console.log('Uploaded file successfully:', snapshot);
+            getDownloadURL(storageRef).then((imageUrl) => {
+                console.log('Image URL:', imageUrl);
+                push(dbRef(database, 'posts'), {
+                    userId: userId,
+                    dishName: dishName,
+                    cuisine: cuisine,
+                    timeTaken: timeTaken,
+                    ingredients: ingredients,
+                    instructions: instructions,
+                    imageUrl: imageUrl
+                }).then((newPostRef) => {
+                    console.log('Data saved successfully with key:', newPostRef.key);
+                    resetForm();
+                }).catch((error) => {
+                    console.error('Error saving data:', error);
+                });
+            }).catch((error) => {
+                console.error('Error getting download URL:', error);
+            });
+        }).catch((error) => {
+            console.error('Error uploading file:', error);
+        });
+    } 
+
+    function resetForm() {
+        document.getElementById('post-form').reset();
+
+    }
+
+
+
+    //for swiping
+
+const swipper=document.querySelector('.swipper');
+const like=document.querySelector('#like');
+const dislike=document.querySelector('#dislike');
+
+const imageURLs = [];
+let cardCount=0;
+let initialImages = [];
+
+
+
+function fetchPostImageURLs() {
+    console.log("Fetching post image URLs...");
+    return get(dbRef(database, 'posts')).then((snapshot) => {
+        const posts = snapshot.val();
+        console.log("Fetched posts:");
+        if (posts) {
+            Object.values(posts).forEach((post) => {
+                if (post.image_url) {
+                    imageURLs.push(post.image_url);
+                }
+            });
+        }
+        console.log("Image URLs from posts:");
+        console.log("Number of image URLs:", imageURLs.length);
+        return imageURLs;
+        
+    })
+    .then((imageURLs) => {
+        console.log("Fetching download URLs for image URLs:");
+        // Fetch images from Firebase Storage based on the imageURLs
+        const imageFetchPromises = imageURLs.map((imageUrl) => {
+            console.log("fetching images");
+            return getDownloadURL(ref(storage, imageUrl));
+        });
+        console.log("fetched all images");
+        return Promise.all(imageFetchPromises);
+    })
+    .then((downloadURLs) => {
+            console.log("Download URLs fetched:", downloadURLs.length);
+            return downloadURLs;
+        })
+        .catch((error) => {
+            console.error("Error fetching post image URLs:", error);
+            throw error; // Propagate the error to the caller
+        });
+}
+
+fetchPostImageURLs().then((imageURLs) => {
+    console.log("Fetched initial image URLs:", imageURLs);
+  // Now imageURLs contains the URLs fetched from Firebase Realtime Database for each post
+  // Update the urls array with imageURLs
+  initialImages = imageURLs.slice(0, 5);
+
+  // Initialize swiper with cards using the updated URLs
+  initialImages.forEach((imageUrl) => {
+        appendNewCard(imageUrl);
+    });
+  
+});
+
+
+
+function appendNewCard(imageUrl) {
+    const card = new Card({
+        imageUrl: imageUrl,
+        onDismiss: () => {
+            // Remove the dismissed image from the initialImages array
+            initialImages.shift();
+            // Append a new card with a new image URL
+            if (initialImages.length < 5) {
+                appendNewCard(imageURLs[cardCount % imageURLs.length]);
+            }
+        },
+        onLike: () => {
+            like.style.animationPlayState = 'running';
+            like.classList.toggle('trigger');
+      },
+        onDislike: () => {
+            dislike.style.animationPlayState = 'running';
+            dislike.classList.toggle('trigger');
+      },
+        onCardOpen: (imageUrl) => {
+            detailImage.src = imageUrl; // Update detail image source when a card is opened
+      }
+    });
+    
+    swipper.append(card.element);
+    cardCount++;
+  
+    const cards = swipper.querySelectorAll('.card:not(.dismissing)');
+    cards.forEach((card, index) => {
+      card.style.setProperty('--i', index);
+    });
+    
+  }
+  const detailBlock = document.querySelector('.detail');
+
+  // Variable to store the URL of the last swiped right image
+  let lastSwipedRightImageUrl = '';
+  
+  function compareURLs(url1, url2) {
+    // Extract the image name from URL1
+    let imageName1 = extractImageName(url1);
+    // Extract the image name from URL2
+    const imageName2 = extractImageName(url2);
+
+    // Remove 'F' from the image name of URL1
+    imageName1 = imageName1.replace('F', '');
+
+    // Compare the image names
+    return cleanImageName(imageName1) === cleanImageName(imageName2);
+}
+
+function extractImageName(url) {
+    // Remove everything before 'images/'
+    const startIndex = url.indexOf('images');
+    if (startIndex !== -1) {
+        let imageName = url.substring(startIndex + 7); // Add 7 to exclude 'images/'
+        // Remove everything after 'jpg?'
+        const jpgIndex = imageName.indexOf('jpg?');
+        imageName = jpgIndex !== -1 ? imageName.substring(0, jpgIndex + 3) : imageName;
+        // Remove parentheses from the image name
+        imageName = imageName.replace(/[()]+/g, '');
+        return imageName;
+    } else {
+        return null; // Return null if 'images/' is not found in the URL
+    }
+}
+
+function cleanImageName(imageName) {
+    // Remove numbers and '%' from the image name
+    return imageName.replace(/[0-9%]+/g, '');
+}
+// Function to handle card swipe event
+function handleCardDismissal(direction, imageUrl) {
+    // Update lastSwipedRightImageUrl with the URL of the swiped right image
+    lastSwipedRightImageUrl = direction === 1 ? imageUrl : lastSwipedRightImageUrl;
+
+
+    // Show detail block only if a card is swiped to the right (liked)
+    if (direction === 1) {
+        // Display the detail block
+        detailBlock.style.display = 'block';
+        // Fade in the detail block
+        setTimeout(function() {
+            detailBlock.style.opacity = '1';
+        }, 100);
+
+        // Update the image source
+        document.getElementById('detail-image').src = imageUrl;
+
+        // Fetch details from Firebase Realtime Database based on the image URL
+        get(dbRef(database, 'posts')).then((snapshot) => {
+            console.log('Fetched post details.');
+            const posts = snapshot.val();
+            // console.log('Posts:', posts);
+            if (posts) {
+    for (const postId in posts) {
+        const post = posts[postId];
+
+        console.log("Post ID:", postId); // Log the post ID to ensure we're retrieving it correctly
+        console.log("Post Data:", post); // Log the post data for reference
+
+        // Check if the current post's image URL matches the swiped image URL
+        const check = compareURLs(imageUrl, post.image_url);
+        console.log("Check:", check);
+
+        if (check) {
+            // Update detail block with post details
+            document.getElementById('dishName').innerText = post.food_name;
+            document.getElementById('cuisine').innerText = 'Cuisine: ' + post.cuisine;
+            document.getElementById('time').innerText = 'Time: ' + post.prep_time ;
+            document.getElementById('ingredients').innerHTML = '<h4>Ingredients:</h4><br>' + post.ingredients;
+            document.getElementById('instructions').innerHTML = '<h4>Instructions:</h4><br>' + post.instructions;
+
+            // Increase swipe count of the post
+            const postRef = dbRef(database, `posts/${postId}`);
+            console.log("Post Reference:", postRef); // Check if postRef is correctly referencing the post
+
+            const newSwipeCount = post.swipe_count ? post.swipe_count + 1 : 1;
+            console.log("New Swipe Count:", newSwipeCount); // Check if newSwipeCount is correctly calculated
+
+            update(postRef, { swipe_count: newSwipeCount })
+                .then(() => {
+                    console.log("Swipe count updated successfully.");
+                })
+                .catch((error) => {
+                    console.error('Error updating swipe count:', error); // Log any errors that occur during the update process
+                });
+
+                const thumbsUpButton = document.querySelector('.btn-like');
+                        thumbsUpButton.addEventListener('click', function() {
+                            // Increase like count of the post by 1
+                            const postRef = dbRef(database, `posts/${postId}`);
+                            const newLikeCount = post.like_count ? post.like_count + 1 : 1;
+                            update(postRef, { like_count: newLikeCount })
+                                .then(() => {
+                                    console.log("Like count updated successfully.");
+                                })
+                                .catch((error) => {
+                                    console.error('Error updating like count:', error);
+                                });
+                        });
+            // Exit the loop once a matching post is found
+            break;
+        }
+    }
+}
+
+        }).catch((error) => {
+            console.error('Error fetching post details:', error);
+        });
+    } 
+}
+
+
+  
+
+//Function to handle card swipe event
+function handleCardSwipe() {
+    // Get the currently visible card in the swiper
+    const visibleCard = document.querySelector('.card:not(.dismissing)');
+    if (visibleCard) {
+        // Get the image URL of the visible card
+        const imageUrl = visibleCard.querySelector('img').src;
+        // Update the lastSwipedRightImageUrl with the image URL of the visible card
+        
+        // Update the detail image with the image URL of the last swiped right image
+        //detailImage.src = imageUrl;
+    }
+}
+
+
+
+
+swipper.addEventListener('transitionend', (event) => {
+    const card = event.target;
+    if (card.classList.contains('card') && card.classList.contains('dismissing')) {
+        // Get the direction of card dismissal
+        const direction = card.style.transform.includes('rotate(90deg)') ? 1 : -1;
+        // Get the image URL of the swiped card
+        const imageUrl = card.querySelector('img').src;
+        // Handle card dismissal
+        console.log('Card dismissed:', imageUrl);
+        handleCardDismissal(direction, imageUrl);
+        // Remove the dismissed card from the DOM
+        card.remove();
+        // If there are fewer than 5 cards, append a new card to the swiper
+        console.log('Remaining cards:', swipper.querySelectorAll('.card:not(.dismissing)').length);
+        if (swipper.querySelectorAll('.card:not(.dismissing)').length < 5) {
+            if (initialImages.length > 0) {
+                console.log('Adding new card from initialImages');
+
+                initialImages.shift(); // Remove the first image from initialImages
+                console.log('Remaining initial images:', initialImages.length);
+                
+                appendNewCard(initialImages.shift());
+            } else {
+                // If initialImages is empty, append a new card with a new image URL from the URLs list
+                console.log('Adding new card from imageURLs');
+                appendNewCard(imageURLs[cardCount % imageURLs.length]);
+
+            }
+        }
+        else{
+            console.log("No card");
+        }
+    }
+});
+
+
+
+// Listen for card swipe event
+swipper.addEventListener('transitionend', handleCardSwipe);
+
+
+
+
+</script>
+
+
+<script>
+    const mainBlock = document.querySelector('.main');
+    const postContainer = document.querySelector('.post-container');
+    const detailsBlock = document.querySelector('.detail');
+    const newPostButton = document.querySelector('.new-post-button');
+    const swipeArea = document.querySelector('.swipper');
+
+    // Initially display the community page
+    mainBlock.style.display = 'flex';
+    postContainer.style.display = 'block';
+    
+
+    newPostButton.addEventListener('click', function() {
+        // Display post container
+        postContainer.style.display = 'block';
+        detailsBlock.style.display = 'none'; // Hide detail block
+    });
+
+    swipeArea.addEventListener('click', function() {
+        // Display detail block
+        detailsBlock.style.display = 'block';
+        postContainer.style.display = 'none'; // Hide post container
+    });
+
+</script>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>   
+<script src="card.js"></script> 
+<script>
+
+</script>
+<script src="app1.js"></script> 
+</body>
+</html>

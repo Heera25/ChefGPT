@@ -1,0 +1,556 @@
+:root{
+    --primaryColor:#4c50d3;
+    --secondaryColor:#ffce00;
+    --fontColor:#1e1e1e;
+    --whiteColor:#fff;
+    --greyColor:#e7e7e7;
+    --darkGreyColor:#5f5f5f;
+    --softPurple:#e7e8ff;
+    --softBlue:#c3e1ff;
+    --softYellow:#fff5cc;
+    --softRed:#ffcbc8;
+}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    outline:none;
+    font-family:'Lato', sans-serif;
+
+}
+body{
+    width:100%;
+    height:100vh;
+    display:flex;
+}
+
+a{
+    display: flex;
+    align-items: center;
+    color:black;
+    text-decoration: none;
+}
+.sidebar{
+    width:20%;
+    height:100%;
+    display:flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 2rem;
+    background-color: var(--primaryColor);
+    color: var(--whiteColor);
+    position: fixed;
+    left:0;
+}
+.logo{
+    letter-spacing: 2;
+}
+.menus{
+    display: flex;
+    flex-direction: column;
+    gap:2rem;
+}
+.menus a{
+    display: flex;
+    align-items: center;
+    color:var(--whiteColor);
+    text-decoration: none;
+}
+.menus ion-icon{
+    margin-right: 0.5rem;
+}
+.menus a:hover{
+    color:var(--secondaryColor);
+}
+.thumbs{
+    height: 50px;
+    width: 50px;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    gap:0.5rem;
+    padding:0.5rem;
+    background-color: var(--whiteColor);
+    color: var(--fontColor);
+    border: none;
+    border-radius: 10px;
+    box-shadow: rgba(99,99,99,0.2) 0px 2px 8px 0px;
+    cursor: pointer;
+}
+.thumbs:hover{
+    background-color: var(--secondaryColor);
+}
+.profile {
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    gap:0.5rem;
+    padding:1rem;
+    background-color: var(--whiteColor);
+    color: var(--fontColor);
+    border: none;
+    border-radius: 10px;
+    box-shadow: rgba(99,99,99,0.2) 0px 2px 8px 0px;
+    cursor: pointer;
+}
+
+.font-buttons {
+    display: inline-block;
+}
+
+.button-container {
+    display: inline-block;
+    margin-right: 10px; /* Adjust the margin as needed */
+    margin-bottom: 90px;
+  }
+
+.font-adjust-button {
+    display: inline-block;
+    width: 20px; /* Set the fixed width */
+    height: 20px; /* Set the fixed height */
+    margin-right: 10px; /* Adjust spacing between buttons */
+    font-size: 15px; /* Adjust font size of buttons */
+}
+.profile-img{
+    width:30px;
+    height:30px;
+    border-radius:50%
+}
+.profile:hover{
+    background-color: var(--secondaryColor);
+}
+.profile-name{
+    font-size: 15px;
+}
+.main{
+    width:calc(100% - 20% - 25%);
+    min-height:100%;
+    min-width: 300px;
+    height:max-content;
+    display: none;
+    flex-direction: column;
+    padding: 2rem 2%;
+    margin-left: 20%;
+    z-index: 1;
+    background-image: url('pizza.png'); /* Specify the path to your image */
+    background-repeat: repeat;
+    background-size: 4%;
+    background-color: var(--softPurple);
+    opacity: 1;
+}
+.bookmarks-main {
+    width: calc(100% - 20% - 25%);
+    min-height: 100%;
+    min-width: 300px;
+    height: max-content;
+    display: flex;
+    flex-wrap: wrap; /* Allow the cards to wrap into multiple rows */
+    justify-content: flex-start; /* Align cards at the start of the container */
+    padding: 2rem 2%;
+    margin-left: 20%;
+    background-color: var(--softPurple);
+    z-index: 1;
+    background-image: url('orange.png');
+    background-repeat: repeat;
+    background-size: 4%;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.feed-card {
+    
+    width: calc(40% - 20px); /* Adjust width to 45% minus any margin or padding */
+    margin-left: 30px;
+    margin-bottom: 23px;
+    margin-right: 23px;
+    background-color: #f5f5f5;
+    box-shadow: 2px 2px 10px var(--darkGreyColor);
+    border-radius: 5%;
+    flex-basis: calc(40% - 20px); /* Adjust flex-basis to 45% minus any margin or padding */
+}
+
+
+.feed-card img{
+
+    border-radius: 5%;
+}
+.feed-card:hover{
+    box-shadow: 2px 2px 10px var(--primaryColor);
+}
+
+
+.img-card img{
+    width:100%;
+}
+.title-card{
+    text-align: center;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    
+}
+.desc-card{
+    text-align: center;
+    padding-bottom: 20px;
+}
+.main-header,
+    .bookmarks-main-header{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.menu-bar{
+    background-color: var(--whiteColor);
+    padding: 0.5rem;
+    border-radius: 20px;
+    display: none;
+}
+.search{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border: none;
+    background-color: var(--whiteColor);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    margin-bottom: 100px; 
+    position: relative;
+}
+.bookmark-search {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border: none;
+    background-color: var(--whiteColor);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    margin-bottom: 20px; /* Adjusted margin */
+    margin-top: 20px; /* Added margin top */
+    position: relative;
+}
+.search input,.bookmark-search input{
+    width: 90%;
+    border: none;
+}
+.btn-search {
+    position: absolute;
+    height: 100%;
+    right: 0;
+    top: 0;
+    padding: 0 5%;
+    border: none;
+    background-color: var(--primaryColor);
+    color: var(--whiteColor);
+    font-size: 18px;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    cursor: pointer;
+}
+.btn-search:hover{
+    background-color: var(--secondaryColor);
+    color: var(--fontColor);
+}
+.swipper {
+    height: 70vh;
+    width: 50vh;
+    aspect-ratio: 2 / 3;
+    perspective: 1000px;
+    perspective-origin: center 50%;
+    transform-style: preserve-3d;
+    position: relative;
+    bottom: 20%;
+    left: 25%;
+    z-index: 2; /* Ensure the swiper is above other elements */
+}
+
+.card{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 20px;
+    overflow: hidden;
+    transform: translateZ(calc(-30px * var(--i))) translateY(calc(-20px * var(--i))) rotate(calc(-4deg * var(--i)));
+    filter: drop-shadow(2px 2px 20px rgba(0, 0, 0, 0.5));
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.5s;
+    
+}
+
+.card img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+}
+#like,#dislike{
+    font-size: 16vh;
+    border-radius: 50%;
+    padding: 20px;
+    position: absolute;
+    z-index: 1;
+    animation-name: iconAnimation1;
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+    animation-play-state: paused;
+}
+#like.trigger,#dislike.trigger{
+    animation-name: iconAnimation2;
+}
+#like {
+    color: rgb(226, 34, 59);
+    
+    top:40%;
+    right: 25%;/* Adjust the left position as needed */
+}
+
+#dislike {
+    color:#988e8e;
+
+    top:40%;
+    left: 20%; 
+    
+     /* Adjust the right position as needed */
+}
+.detail,.bookmark-detail{
+    width:25%;
+    height: 100%;
+    min-width: 250px;
+    padding: 2rem;
+    position: fixed;
+    right: 0;
+    display: none;
+    background-color: var(--whiteColor);
+    overflow: auto;
+    box-shadow: rgba(100,100,111,0.2) 0px 7px 29px 0px;
+    
+}
+.post-container{
+    width:25%;
+    height: 100%;
+    min-width: 250px;
+    padding: 2rem;
+    position: fixed;
+    right: 0;
+    background-color: var(--whiteColor);
+    overflow: auto;
+    box-shadow: rgba(100,100,111,0.2) 0px 7px 29px 0px;
+    justify-content: space-evenly;
+    display:none;
+    
+    
+}
+.post-inputs{
+    width: 300px;
+    height: 50px;
+    border: none;
+    outline: none;
+    background-color: var(--greyColor);
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-bottom: 25px;
+    font-weight: 500;
+    color: var(--primaryColor);
+    border-radius: 50px;
+    margin-bottom: 15px; 
+    padding: 0 25px; 
+    
+}
+.post-inputs::placeholder {
+    text-align: left; /* Center the placeholder text */
+}
+.post-inputs.text-area {
+    padding-top: 20px;
+    height: 150px; /* Set the height of the textarea */
+    resize: none; /* Prevent the textarea from being resizable */
+}
+
+
+.post-inputs.text-area::placeholder {
+    padding-top: 30px;
+    text-align: left; /* Center the placeholder text in the textarea */
+}
+
+
+.detail-header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.detail-header img{
+    height: 200px;
+    width: 200px;
+}
+.divider{
+    width: 100%;
+    height: 1px;
+    background-color: var(--greyColor);
+    border: none;
+    margin: 1rem 0;
+}
+.detail-desc{
+    line-height: 1.5;
+    font-size: 16px;
+    font-weight: 100;
+}
+.detail-btn{
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+.btn-like{
+    background-color: var(--primaryColor);
+    color: var(--whiteColor);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 24px;
+}
+.btn-post{
+    background-color: var(--primaryColor);
+    color: var(--whiteColor);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 15px;
+}
+.new-post-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color:var(--primaryColor); /* Change the background color as needed */
+    color: #fff; /* Change the text color as needed */
+    width: 60px; /* Adjust the width and height to make it circular */
+    height: 60px; /* Adjust the width and height to make it circular */
+    border: none;
+    border-radius: 50%; /* Make it circular */
+    cursor: pointer;
+    display: flex; /* Allow centering the icon vertically and horizontally */
+    justify-content: center; /* Center the icon horizontally */
+    align-items: center; 
+}
+.new-post-button:hover{
+    background-color: var(--secondaryColor);
+    color: var(--fontColor);
+}
+.new-post-button ion-icon{
+    font-size: 24px; 
+}
+.btn-save{
+    background-color: var(--secondaryColor);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+.btn-like:hover{
+    border: 1px solid var(--primaryColor);
+    background-color:transparent;
+    color: var(--fontColor);
+}
+.btn-post:hover{
+    border: 1px solid var(--primaryColor);
+    background-color:var(--secondaryColor);
+    color: var(--fontColor);
+}
+.btn-save:hover{
+    border: 1px solid var(--secondaryColor);
+    background-color: transparent;
+}
+
+@keyframes iconAnimation1{
+    0%,
+    100%{
+        opacity: 0.2;
+    }
+    50%{
+        opacity: 1;
+    }
+}
+@keyframes iconAnimation2{
+    0%,
+    100%{
+        opacity: 0.2;
+    }
+    50%{
+        opacity: 1;
+    }
+}
+@media screen and (max-width:880px) {
+    .menu-bar{
+        display:block;
+    }
+    .sidebar{
+        display: none;
+    }
+    .main{
+        width: calc(100%-40%);
+        margin-left: 0;
+    }
+    .detail{
+        width: 40%;
+    }
+}
+@media screen and (max-width:700px) {
+
+    .main{
+        width: 100%;
+    }
+    .detail{
+        display:none;
+    }
+    .detail.active{
+        display: block;
+        width: 100%;
+        z-index: 100;
+    }
+    .detail.active .close-detail{
+        display: block;
+        cursor: pointer;
+    }
+}
+
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 20%; /* Adjust width as needed */
+    background-color: #4c50d3;
+    color: #fff;
+    padding: 2rem;
+    overflow-y: auto; /* Enable scrolling if content exceeds sidebar height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Space between content and button */
+  }
+  
+  .voice-button {
+    display: inline-block;
+    margin-right: 10px; /* Adjust the margin as needed */
+    position: absolute; /* Change position to relative */
+    align-self: flex-end; /* Align button to the end of the sidebar */
+    margin-top: auto; /* Push button to the bottom of the sidebar */
+    bottom: 120px;
+    margin-left: 10px;
+    left: 60%; 
+    background-color: white;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px; /* Add margin to separate from user profile */
+  }
+/* 
+  .button-container {
+    display: inline-block;
+  }
+   */

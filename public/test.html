@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chatbot</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-LXSL0+uIqFJfaSGdr7L5GwVz1G+/2fQhZVicOqjcKg9I4ad5eky0gNi2JdwMwKft" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    outline:none;
+    font-family:'Lato', sans-serif;
+
+}
+  html, body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    
+  }
+  body {
+    
+    margin-left: 100px;
+    background-color: #e7e8ff;
+    top: 20px;
+  }
+  .sidebar{
+    width:20%;
+    height:100%;
+    display:flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: #4c50d3;
+    color: #fff;
+    position: fixed;
+    left:0;
+    top:0;
+    overflow-y: auto;
+    font-family:'Lato', sans-serif
+
+}
+.logo{
+    letter-spacing: 2;
+}
+a{
+    display: flex;
+    align-items: center;
+    color:black;
+    text-decoration: none;
+}
+
+  .menus{
+    display: flex;
+    flex-direction: column;
+    gap:2rem;
+}
+.menus a{
+    display: flex;
+    align-items: center;
+    color:#fff;
+    text-decoration: none;
+}
+.menus ion-icon{
+    margin-right: 0.5rem;
+}
+.menus a:hover{
+    color:#ffce00;
+}
+.profile {
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    gap:0.5rem;
+    padding:1rem;
+    background-color: #fff;
+    color: #1e1e1e;
+    border: none;
+    border-radius: 10px;
+    box-shadow: rgba(99,99,99,0.2) 0px 2px 8px 0px;
+    cursor: pointer;
+    /* overflow-y: auto; */
+    bottom: 0;
+
+}
+
+#p1 {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+}
+
+.profile-img{
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    bottom: 0;
+}
+.profile:hover{
+    background-color: #ffce00;
+}
+.profile-name{
+    font-size: 15px;
+}
+
+.control {
+  position: fixed;
+  top: 530px; /* Adjust as needed */
+  right: 150px; /* Adjust as needed */
+}
+
+.timer {
+  position: fixed;
+  top: 530px; /* Adjust as needed to leave space for the buttons */
+  right: 10px; /* Adjust as needed */
+  border: 1px #666666 solid;
+  width: 100px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 17px;
+  font-family: "Courier New", Courier, monospace;
+  text-align: center;
+  margin: 5px;
+}
+
+
+/* .thumbs{
+    height: 50px;
+    width: 50px;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    gap:0.5rem;
+    padding:0.5rem;
+    background-color: #fff;
+    color: #1e1e1e;
+    border: none;
+    border-radius: 10px;
+    box-shadow: rgba(99,99,99,0.2) 0px 2px 8px 0px;
+    cursor: pointer;
+}
+.thumbs:hover{
+    background-color: #ffce00;
+} */
+  #chat-container {
+    background-color: #fff;
+    width: calc(100% - 5% - 25%); /* Adjusted width to accommodate the sidebar */
+    height: 80%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Align elements at the top and bottom */
+    margin-left: 20%; /* Adjusted margin to accommodate the sidebar */
+    margin-top: 30px;
+    overflow-y: auto;
+    box-shadow: 2px 2px 10px #4c50d3;
+    border-radius: 20px;
+  }
+  
+  h1 {
+    
+    margin-bottom: 20px;
+  }
+  
+  #chat-history {
+    height: calc(100% - 90px); /* Adjusted height */
+    overflow-y: auto;/* Compensate for scrollbar width */
+    padding: 20px;
+    margin-right: 0%;
+  }
+  
+  .user-message, .bot-message {
+    display: flex;
+    align-items: center; /* Align icon and text vertically */
+    margin-bottom: 5px;
+    word-wrap: break-word; /* Wrap long messages */
+  }
+  
+  .user-message {
+    justify-content: flex-end; /* Align user message to the right */
+    
+  }
+  
+  .bot-message {
+    justify-content: flex-start; /* Align bot message to the left */
+  }
+  .user-message .fas, .bot-message .fas {
+    margin-right: 5px; /* Adjust spacing between icon and text */
+    font-size: 20px; /* Adjust icon size */
+  }
+
+  
+  .message-text {
+    padding: 10px;
+    background-color: #4c50d3; /* Bot message background color */
+    color: #fff;
+    border-radius: 10px;
+    max-width: 70%;
+  }
+  
+  form {
+    display: flex;
+    justify-content: space-between; /* Align elements horizontally */
+  }
+  
+  #chat-form{
+    margin-bottom: 0%;
+  }
+  input {
+    flex-grow: 1;
+    margin-right: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  button {
+    background-color: #4c50d3;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #loader {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 20%; /* Adjust width as needed */
+    background-color: #4c50d3;
+    color: #fff;
+    padding: 1.5rem;
+    overflow-y: auto; /* Enable scrolling if content exceeds sidebar height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Space between content and button */
+  }
+  
+  .voice-button {
+    position: absolute; /* Change position to relative */
+    align-self: flex-end; /* Align button to the end of the sidebar */
+    margin-top: auto; /* Push button to the bottom of the sidebar */
+    bottom: 0.2px;
+    left: 40%; 
+    background-color: white;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 10px;
+    cursor: pointer;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px; /* Add margin to separate from user profile */
+  }
+
+  .voice-button:hover{
+    background-color: #4c50d3;
+    color: #4c50d3;
+  }
+
+  .read-button {
+    position: absolute; /* Change position to relative */
+    align-self: flex-end; /* Align button to the end of the sidebar */
+    margin-top: auto; /* Push button to the bottom of the sidebar */
+    bottom: 100px;
+    left: 15%; 
+    background-color: white;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px; /* Add margin to separate from user profile */
+  }
+  
+  #timer {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      background-color: #fff; /* Optional background color */
+      padding: 5px; /* Optional padding */
+    }
+</style>
+</head>
+<body>
+  
+  <!-- <div id="p1"></div> 
+  <button onclick="startTimer()">Start</button>
+  <button onclick="stopTimer()">Stop</button> -->
+  <div class="timer">
+    <span class="hour">00</span>:<span class="minute">00</span>:<span class="second">10</span>
+</div>
+<audio id="alarm" src="alarm.mp3"></audio>
+
+<div class="control" id="control">
+  <input type="number" id="minutes" placeholder="Enter minutes">
+  <button onclick="setTimer()">🕒</button> 
+  <button onclick="timer.start(1000)">▶</button> 
+  <button onclick="timer.stop()">l l</button> 
+  <button onclick="timer.mode(1)">+</button> 
+  <button onclick="timer.mode(0)">-</button>
+</div>
+
+  <div class="sidebar">
+    <h1 class="logo">ChefGPT</h1>
+    <div class="menus">
+        <a href='/home.html'><ion-icon name="home-outline"></ion-icon>Home</a>
+        <a href='/bookmark.html' id="bookmark-link"><ion-icon name="bookmarks-outline"></ion-icon>Bookmarks</a>
+        <a href='/test.html'><ion-icon name="chatbubble-outline"></ion-icon>Chat</a>
+        <a href="/community.html" id="community-link"><ion-icon name="aperture-outline"></ion-icon>Community</a>
+        <a href="/settings.html"><ion-icon name="settings-outline"></ion-icon>Settings</a>
+    </div>
+    <div class="profile">
+        <img class="profile-img" src="my.jpg">
+        <div class="profile-name">
+          <a href="/user.html">Albert Einstein</a>
+        </div>
+        
+    </div>
+    
+    <button id="voiceButton" class="voice-button" onclick = "startRecognition()"> 
+      <img src = "microphone.png" width = "20px" height = "20px">
+    </button>
+    <!-- <div class="font-buttons">
+      Font</br></br>
+      <button id="decreaseFontButton" class="font-adjust-button">-</button>
+      <button id="increaseFontButton" class="font-adjust-button">+</button>
+  </div> -->
+<div>
+    <!-- <input type="range" min="0" max="200" value="100" class="slider" id="contrastSlider"> -->
+    </div>
+    <!-- <button id="toggleReadAloudButton" class="read-button" onclick="toggleReadAloud()">
+      <img src = "text-to-speech.png" width = "20px" height = "20px"> 
+    </button> -->
+
+    </div>
+    
+  <div id="chat-container">
+    <div id="chat-history"></div>
+    <form id="chat-form">
+      <input type="text" id="user-input" placeholder="Enter your message">
+      <button type="submit">Send</button>
+    </form>
+  </div>
+  
+  <div id="loader">
+    <img src="loader.gif" width="150px" alt="Loading...">
+  </div>
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
+  <script>
+    const chatHistory = document.getElementById('chat-history');
+    const userInput = document.getElementById('user-input');
+    const form = document.getElementById('chat-form');
+
+    async function sendMessage() {
+      const userMessage = userInput.value;
+      userInput.value = ''; // Clear input field
+      try {
+        const response = await fetch('/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userInput: userMessage }),
+        });
+
+        const data = await response.json();
+        const botMessage = formatBotResponse(data.response);
+        // Add chat message to the chat history
+        chatHistory.innerHTML += `<div class="user-message"><i class="fas fa-user-circle"></i><div class="message-text">${userMessage}</div></div>`;
+        chatHistory.innerHTML += `<div class="bot-message"><i class="fas fa-robot"></i><div class="message-text">${botMessage}</div></div>`;
+
+        // Scroll to the bottom of the chat history
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+      } catch (error) {
+        console.error('Error:', error);
+        // Handle errors gracefully, e.g., display an error message to the user
+      }
+    }
+
+    // function showTime()
+    //     {
+    //         var d=new Date();
+    //         var h=d.getHours();
+    //         var m=d.getMinutes();
+    //         var s=d.getSeconds();
+    //     document.getElementById('p1').innerHTML=h + ":" + m + ":" + s;
+    //     }  
+    //     setInterval(showTime,1000); 
+    function playAlarmSound() {
+    var alarmSound = document.getElementById('alarm');
+    alarmSound.addEventListener('ended', function() {
+        alert('Time is up!'); // Play alert after sound finishes
+    });
+    alarmSound.play();
+}
+
+    function _timer(callback){
+    var time = 0;     //  The default time of the timer
+    var mode = 1;     //    Mode: count up or count down
+    var status = 0;    //    Status: timer is running or stoped
+    var timer_id;    //    This is used by setInterval function
+    
+    // this will start the timer ex. start the timer with 1 second interval timer.start(1000) 
+    
+    this.start = function(interval)
+    {
+        interval = (typeof(interval) !== 'undefined') ? interval : 1000;
+ 
+        if(status == 0)
+        {
+            status = 1;
+            timer_id = setInterval(function()
+            {
+                switch(mode)
+                {
+                    default:
+                    if(time)
+                    {
+                        time--;
+                        generateTime();
+                        if(typeof(callback) === 'function') callback(time);
+                    }
+                    break;
+                    
+                    case 1:
+                    if(time < 86400)
+                    {
+                        time++;
+                        generateTime();
+                        if(typeof(callback) === 'function') callback(time);
+                    }
+                    break;
+                }
+            }, interval);
+        }
+    }
+
+//     function playAlarmSound() {
+//   var alarmSound = document.getElementById('alarm');
+//   alarmSound.addEventListener('ended', function() {
+//     alert('Time is up!'); // Play alert after sound finishes
+//   });
+//   alarmSound.play();
+// }
+
+    
+    //  Same as the name, this will stop or pause the timer ex. timer.stop()
+    this.stop =  function()
+    {
+        if(status == 1)
+        {
+            status = 0;
+            clearInterval(timer_id);
+        }
+    }
+    
+    // Reset the timer to zero or reset it to your own custom time ex. reset to zero second timer.reset(0)
+    this.reset =  function(sec)
+    {
+        sec = (typeof(sec) !== 'undefined') ? sec : 0;
+        time = sec;
+        generateTime(time);
+    }
+    
+    // Change the mode of the timer, count-up (1) or countdown (0)
+    this.mode = function(tmode)
+    {
+        mode = tmode;
+    }
+    
+    // This methode return the current value of the timer
+    this.getTime = function()
+    {
+        return time;
+    }
+    
+    // This methode return the current mode of the timer count-up (1) or countdown (0)
+    this.getMode = function()
+    {
+        return mode;
+    }
+    
+    // This methode return the status of the timer running (1) or stoped (1)
+    this.getStatus
+    {
+        return status;
+    }
+    
+    // This methode will render the time variable to hour:minute:second format
+    function generateTime()
+    {
+        var second = time % 60;
+        var minute = Math.floor(time / 60) % 60;
+        var hour = Math.floor(time / 3600) % 60;
+        
+        second = (second < 10) ? '0'+second : second;
+        minute = (minute < 10) ? '0'+minute : minute;
+        hour = (hour < 10) ? '0'+hour : hour;
+        
+        $('div.timer span.second').html(second);
+        $('div.timer span.minute').html(minute);
+        $('div.timer span.hour').html(hour);
+    }
+}
+ 
+function setTimer() {
+  var minutesInput = document.getElementById('minutes').value;
+  var seconds = parseInt(minutesInput) * 60;
+  timer.reset(seconds);
+}
+
+// example use
+var timer;
+ 
+$(document).ready(function(e) 
+{
+    timer = new _timer
+    (
+        function(time)
+        {
+            if(time == 0)
+            {
+                timer.stop();
+                playAlarmSound();
+            }
+        }
+    );
+    timer.reset(0);
+    timer.mode(0);
+});
+
+  //   var intervalId; // Variable to store the interval ID
+  
+  // function showTime() {
+  //   var d = new Date();
+  //   var h = d.getHours();
+  //   var m = d.getMinutes();
+  //   var s = d.getSeconds();
+  //   document.getElementById('p1').innerHTML = h + ":" + m + ":" + s;
+  // }
+
+  // function startTimer() {
+  //   showTime(); // Show time immediately when starting
+  //   intervalId = setInterval(showTime, 1000); // Start the timer and store the interval ID
+  // }
+
+  // function stopTimer() {
+  //   clearInterval(intervalId); // Stop the timer using the stored interval ID
+  // }
+
+    function formatBotResponse(response) {
+        const htmlResponse = marked.parse(response);
+        return htmlResponse; // markdown to html
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault(); // Prevent form submission
+      const loader = document.getElementById('loader');
+      loader.style.display = 'block'; // Show the loader
+      sendMessage().finally(() => {
+        loader.style.display = 'none'; // Hide the loader after the message is sent
+      });
+
+    });
+    
+
+    let recognition
+
+    function startRecognition() {
+    // Stop recognition if it's already in progress
+    if (recognition && recognition.running) {
+        recognition.stop();
+        return; // Exit the function to prevent starting recognition again
+    }
+
+    // Initialize recognition if it's not already initialized
+    if (!recognition) {
+        recognition = new webkitSpeechRecognition();
+        recognition.lang = 'en-US';
+
+        // Set recognition options
+        recognition.continuous = false; // Stop listening after one phrase is spoken
+
+        // Event handler for recognition result
+        recognition.onresult = function(event) {
+            const voiceCommand = event.results[0][0].transcript.toLowerCase(); // Convert the voice command to lowercase for easier comparison
+            if (voiceCommand.includes('scroll up')) {
+                scrollToTop(); // Scroll to the top of the page
+            } else if (voiceCommand.includes('go up')) {
+                scrollToTop(); // Navigate to the community page
+            } else if (voiceCommand.includes('scroll to the top')) {
+                scrollToTop(); // Navigate to the community page
+            } else if (voiceCommand.includes('go to top')) {
+                scrollToTop(); // Navigate to the community page
+            } else if (voiceCommand.includes('go to community')) {
+                window.location.href = '/community.html'; // Navigate to the community page
+            } else if (voiceCommand.includes('go to settings')) {
+                window.location.href = '/settings.html'; // Navigate to the settings page
+            } else if (voiceCommand.includes('go to home')) {
+                window.location.href = '/home.html'; // Navigate to the settings page
+            } else if (voiceCommand.includes('go to chat')) {
+                window.location.href = '/test.html'; // Navigate to the community page
+            } else if (voiceCommand.includes('refresh')) {
+                window.location.href = '/test.html'; // Navigate to the community page
+            } else if (voiceCommand.includes('user profile')) {
+                window.location.href = '/user.html'; // Navigate to the settings page
+            } else if (voiceCommand.includes('go to bookmarks')) {
+                window.location.href = '/bookmark.html'; // Navigate to the settings page
+            } else {
+              sendMessageToChatbot(voiceCommand);
+                // document.getElementById('voiceInputResult').textContent = voiceCommand; // Display the voice command for debugging
+            }
+
+            // Re-enable the button after recognition stops
+            document.getElementById('voiceButton').disabled = false;
+        };
+
+        // Event handler for recognition error
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error', event.error);
+
+            // Re-enable the button if there's an error
+            document.getElementById('voiceButton').disabled = false;
+        };
+    }
+
+    // Start recognition
+    recognition.start();
+
+    // Disable the button during recognition
+    document.getElementById('voiceButton').disabled = true;
+}
+
+// async function sendMessageToChatbot(command) {
+//     try {
+//         const response = await fetch('/chat', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ userInput: command }),
+//         });
+
+//         const data = await response.json();
+//         const botMessage = formatBotResponse(data.response);
+//         // Add chat message to the chat history
+//         chatHistory.innerHTML += `<div class="user-message"><i class="fas fa-user-circle"></i><div class="message-text">${command}</div></div>`;
+//         chatHistory.innerHTML += `<div class="bot-message"><i class="fas fa-robot"></i><div class="message-text">${botMessage}</div></div>`;
+
+//         // Scroll to the bottom of the chat history
+//         chatHistory.scrollTop = chatHistory.scrollHeight;
+//     } catch (error) {
+//         console.error('Error:', error);
+//         // Handle errors gracefully, e.g., display an error message to the user
+//     }
+// }async function sendMessageToChatbot(command) {
+//     try {
+//         const response = await fetch('/chat', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ userInput: command }),
+//         });
+
+//         const data = await response.json();
+//         const botMessage = formatBotResponse(data.response);
+
+//         // Add chat message to the chat history
+//         chatHistory.innerHTML += `<div class="user-message"><i class="fas fa-user-circle"></i><div class="message-text">${command}</div></div>`;
+//         chatHistory.innerHTML += `<div class="bot-message"><i class="fas fa-robot"></i><div class="message-text">${botMessage}</div></div>`;
+
+//         // Scroll to the bottom of the chat history
+//         chatHistory.scrollTop = chatHistory.scrollHeight;
+
+//         // Add bot message to utterance queue
+//         addUtteranceToQueue(botMessage);
+        
+//         // Read the bot message immediately
+//         readNextUtterance();
+
+//     } catch (error) {
+//         console.error('Error:', error);
+//         // Handle errors gracefully, e.g., display an error message to the user
+//     }
+// }
+
+
+
+var isMouseDown = false;
+
+// Get the footer element
+var footer = document.querySelector('footer');
+
+// Get the slider element
+var contrastSlider = document.getElementById("contrastSlider");
+
+// Get the sidebar element
+var sidebar = document.querySelector('.sidebar');
+
+// Get the container for sidebar content
+var sidebarContent = document.querySelector('.sidebar-content');
+
+// Add an event listener to the slider for mouse down
+contrastSlider.addEventListener("mousedown", function(event) {
+  isMouseDown = true;
+});
+
+// Add an event listener to the slider for mouse up
+contrastSlider.addEventListener("mouseup", function(event) {
+  isMouseDown = false;
+});
+
+// Add an event listener to the slider for mouse move
+contrastSlider.addEventListener("mousemove", function(event) {
+  // Check if the mouse button is pressed down
+  if (isMouseDown) {
+    // Get the value of the slider
+    var contrastValue = parseInt(contrastSlider.value);
+
+    // Apply the contrast value to the content of the page excluding the sidebar
+    document.body.style.filter = "contrast(" + contrastValue + "%)";
+    sidebar.style.filter = "none"; // Reset filter for the sidebar
+  }
+});
+
+// Add an event listener to the slider for input
+contrastSlider.addEventListener("input", function() {
+  // Get the value of the slider
+  var contrastValue = parseInt(contrastSlider.value);
+
+  // Apply the contrast value to the content of the page excluding the sidebar
+  document.body.style.filter = "contrast(" + contrastValue + "%)";
+  sidebar.style.filter = "none"; // Reset filter for the sidebar
+});
+
+// Set sidebar position to fixed
+sidebar.style.position = "fixed";
+sidebar.style.top = "0";
+sidebar.style.bottom = "0";
+sidebar.style.overflowY = "auto";
+
+// Apply flexbox properties to sidebar content container
+sidebarContent.style.display = "flex";
+sidebarContent.style.flexDirection = "column";
+sidebarContent.style.justifyContent = "space-between";
+
+
+let isReadingAloud = false;
+let utteranceQueue = [];
+
+
+function toggleReadAloud() {
+    isReadingAloud = !isReadingAloud;
+    if (isReadingAloud) {
+        // Start reading aloud
+        readNextUtterance();
+        document.getElementById('toggleReadAloudButton').textContent = 'Stop Reading';
+    } else {
+        // Stop reading aloud
+        utteranceQueue = []; // Clear the utterance queue
+        window.speechSynthesis.cancel(); // Stop reading
+        document.getElementById('toggleReadAloudButton').textContent = 'Start Reading';
+    }
+}
+
+
+function readNextUtterance() {
+    if (!isReadingAloud || utteranceQueue.length === 0) return;
+
+    const utterance = utteranceQueue.shift();
+    utterance.onend = () => {
+        readNextUtterance(); 
+    };
+    window.speechSynthesis.speak(utterance);
+}
+
+function addUtteranceToQueue(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utteranceQueue.push(utterance);
+    if (utteranceQueue.length === 1) {
+        readNextUtterance(); // Start reading if this is the first utterance in the queue
+    }
+}
+
+// Modify your sendMessageToChatbot function to add messages to the utterance queue
+async function sendMessageToChatbot(command) {
+    try {
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userInput: command }),
+        });
+
+        const data = await response.json();
+        const botMessage = formatBotResponse(data.response);
+
+        // Add chat message to the chat history
+        chatHistory.innerHTML += `<div class="user-message"><i class="fas fa-user-circle"></i><div class="message-text">${command}</div></div>`;
+        chatHistory.innerHTML += `<div class="bot-message"><i class="fas fa-robot"></i><div class="message-text">${botMessage}</div></div>`;
+
+        // Scroll to the bottom of the chat history
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+
+        // Add bot message to utterance queue
+        addUtteranceToQueue(botMessage);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+function updateTimer() {
+      // Get the current date and time
+      const now = new Date();
+
+      // Format hours, minutes, and seconds with leading zeros
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+
+      // Update the timer element with the current time
+      document.getElementById('timer').textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    // Update the timer every second
+    setInterval(updateTimer, 1000);
+
+    function decreaseFontSize() {
+        // Get the current font size of the body element
+        var currentFontSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+        // Decrease the font size by 1 pixel
+        var newFontSize = currentFontSize - 1;
+        // Set the new font size to the body element
+        document.body.style.fontSize = newFontSize + "px";
+    }
+
+    // Function to increase font size
+    function increaseFontSize() {
+        // Get the current font size of the body element
+        var currentFontSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+        // Increase the font size by 1 pixel
+        var newFontSize = currentFontSize + 1;
+        // Set the new font size to the body element
+        document.body.style.fontSize = newFontSize + "px";
+    }
+
+    // Add event listeners to the font size adjustment buttons
+    document.getElementById("decreaseFontButton").addEventListener("click", decreaseFontSize);
+    document.getElementById("increaseFontButton").addEventListener("click", increaseFontSize);
+
+
+  </script>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+</body>
+</html>
