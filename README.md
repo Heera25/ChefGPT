@@ -7,7 +7,9 @@ Many individuals face challenges in meal planning due to the complexities of bal
 Problem 2:
 In addition to the challenges in meal planning, we also head towards tackling the problem of not having a social media platform for all people irrespective of their age, gender and disabilities
 
+
 # Objectives
+
 Simplify Meal Planning: Develop an AI-based solution that streamlines the meal planning process, taking into account individual preferences, dietary restrictions, and nutritional needs.
 
 Enhance Convenience: Create a user-friendly platform accessible via web app, allowing users to interact with ChefGPT seamlessly for meal planning and cooking guidance.
@@ -19,12 +21,16 @@ Promote Health and Wellness: Provide nutritional insights and information on ing
 Cultivate a Community: Establish a vibrant online community within ChefGPT where users can connect, share experiences, exchange recipes, and offer support to one another.
 
 Foster Creativity and Sustainability: Offer innovative suggestions for utilizing leftovers and minimizing food waste, encouraging users to experiment with new recipes and reduce their environmental footprint.
+
+
 # Sustainable Goals Targeted
 1. SDG 2: Zero Hunger
 2. SDG 3: Good Health and Well-being
 3. SDG 12: Responsible Consumption and Production
 4. SDG 10: Reduced Inequalities
 5. SDG 17: Partnerships for the Goals
+
+   
 # Target Audience
 Individuals facing time constraints in meal planning and preparation.
 
